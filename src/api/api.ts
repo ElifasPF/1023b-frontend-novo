@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 const api = axios.create({
-    baseURL:"http://localhost:8000"
+    baseURL:import.meta.env.VITE_API_URL
 })
 //Nós vamos criar um middleware para adicionar o token na requisição
 
@@ -17,9 +17,10 @@ api.interceptors.response.use(
     (response)=>response,
     (error)=>{
         const status = error?.response?.status;
-        if(status===401){
+        if(status===401&&!(error?.config?.url.endsWith('/login')
+        )){
             localStorage.removeItem("token")
-            window.location.href="/login?message=Token inválido!"
+            window.location.href="/login?message=Token inválido!"       
         }
         return Promise.reject(error)
     }
